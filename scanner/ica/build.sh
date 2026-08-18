@@ -36,8 +36,20 @@ xcrun clang -fobjc-arc -fno-modules -Wno-deprecated-declarations \
   -lc++ \
   -o "$APP/Contents/MacOS/KMScannerModule"
 
-xattr -cr "$APP" 2>/dev/null || true
-codesign -f -s - "$APP"
+SIGNED=0
+for attempt in 1 2 3; do
+  xattr -cr "$APP" 2>/dev/null || true
+  xattr -d com.apple.FinderInfo "$APP" 2>/dev/null || true
+  xattr -d com.apple.fileprovider.fpfs#P "$APP" 2>/dev/null || true
+  if codesign -f -s - "$APP" 2>/dev/null; then
+    SIGNED=1
+    break
+  fi
+done
+if [[ "$SIGNED" != "1" ]]; then
+  echo "codesign failed: the bundle has persistent extended attributes" >&2
+  exit 1
+fi
 
 echo "Built: $APP"
 lipo -info "$APP/Contents/MacOS/KMScannerModule"

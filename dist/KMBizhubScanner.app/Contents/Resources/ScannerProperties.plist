@@ -142,6 +142,57 @@
 							<integer>600</integer>
 						</array>
 					</dict>
+					<key>ICAP_XSCALING</key>
+					<dict>
+						<key>current</key>
+						<real>1</real>
+						<key>default</key>
+						<real>1</real>
+						<key>max</key>
+						<real>4</real>
+						<key>min</key>
+						<real>0.25</real>
+						<key>stepSize</key>
+						<real>0.01</real>
+						<key>type</key>
+						<string>TWON_RANGE</string>
+					</dict>
+					<key>ICAP_YSCALING</key>
+					<dict>
+						<key>current</key>
+						<real>1</real>
+						<key>default</key>
+						<real>1</real>
+						<key>max</key>
+						<real>4</real>
+						<key>min</key>
+						<real>0.25</real>
+						<key>stepSize</key>
+						<real>0.01</real>
+						<key>type</key>
+						<string>TWON_RANGE</string>
+					</dict>
+					<key>ICAP_SUPPORTEDSIZES</key>
+					<dict>
+						<key>current</key>
+						<integer>1</integer>
+						<key>default</key>
+						<integer>1</integer>
+						<key>type</key>
+						<string>TWON_ENUMERATION</string>
+						<key>value</key>
+						<array>
+							<integer>1</integer>
+							<integer>2</integer>
+							<integer>3</integer>
+							<integer>4</integer>
+							<integer>5</integer>
+							<integer>10</integer>
+							<integer>0</integer>
+						</array>
+					</dict>
+					<key>templateMeasurementUnit</key>
+					<integer>0</integer>
 					<key>supportsProgressNotificationsWithScanData</key>
 					<integer>1</integer>
 				</dict>
@@ -280,6 +331,57 @@
 							<integer>600</integer>
 						</array>
 					</dict>
+					<key>ICAP_XSCALING</key>
+					<dict>
+						<key>current</key>
+						<real>1</real>
+						<key>default</key>
+						<real>1</real>
+						<key>max</key>
+						<real>4</real>
+						<key>min</key>
+						<real>0.25</real>
+						<key>stepSize</key>
+						<real>0.01</real>
+						<key>type</key>
+						<string>TWON_RANGE</string>
+					</dict>
+					<key>ICAP_YSCALING</key>
+					<dict>
+						<key>current</key>
+						<real>1</real>
+						<key>default</key>
+						<real>1</real>
+						<key>max</key>
+						<real>4</real>
+						<key>min</key>
+						<real>0.25</real>
+						<key>stepSize</key>
+						<real>0.01</real>
+						<key>type</key>
+						<string>TWON_RANGE</string>
+					</dict>
+					<key>ICAP_SUPPORTEDSIZES</key>
+					<dict>
+						<key>current</key>
+						<integer>1</integer>
+						<key>default</key>
+						<integer>1</integer>
+						<key>type</key>
+						<string>TWON_ENUMERATION</string>
+						<key>value</key>
+						<array>
+							<integer>1</integer>
+							<integer>2</integer>
+							<integer>3</integer>
+							<integer>4</integer>
+							<integer>5</integer>
+							<integer>10</integer>
+							<integer>0</integer>
+						</array>
+					</dict>
+					<key>templateMeasurementUnit</key>
+					<integer>0</integer>
 					<key>supportsProgressNotificationsWithScanData</key>
 					<integer>1</integer>
 				</dict>

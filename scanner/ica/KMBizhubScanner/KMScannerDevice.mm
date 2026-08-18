@@ -28,6 +28,18 @@
 
 @implementation KMScannerDevice
 
+static void kmFileLog(NSString* message) {
+  FILE* f = fopen("/tmp/km-scanner.log", "a");
+  if (!f) {
+    return;
+  }
+  NSDateFormatter* formatter = [[NSDateFormatter alloc] init];
+  formatter.dateFormat = @"HH:mm:ss.SSS";
+  NSString* stamp = [formatter stringFromDate:[NSDate date]];
+  fprintf(f, "%s %s\n", stamp.UTF8String, message.UTF8String);
+  fclose(f);
+}
+
 static os_log_t scannerLog(void) {
   static os_log_t log = nil;
   static dispatch_once_t once;
@@ -217,6 +229,7 @@ static os_log_t scannerLog(void) {
 
   os_log(scannerLog(),
          "SetParameters: %{public}@", paramDict);
+  kmFileLog([NSString stringWithFormat:@"SetParameters: %@", paramDict]);
 
   return noErr;
 }
@@ -296,6 +309,28 @@ static os_log_t scannerLog(void) {
     [padded appendBytes:lastRow.bytes length:count];
   }
   return padded;
+}
+
+- (NSData*)rotated180GrayData:(NSData*)gray
+                        width:(NSUInteger)width
+                       height:(NSUInteger)height {
+  NSUInteger pixels = width * height;
+  if (pixels == 0) {
+    return [NSData data];
+  }
+  if (gray.length < pixels) {
+    gray = [self paddedGrayData:gray width:width height:height];
+  }
+  const uint8_t* src = (const uint8_t*)gray.bytes;
+  NSMutableData* output = [NSMutableData dataWithLength:pixels];
+  uint8_t* dst = (uint8_t*)output.mutableBytes;
+  for (NSUInteger y = 0; y < height; ++y) {
+    for (NSUInteger x = 0; x < width; ++x) {
+      dst[(height - 1 - y) * width + (width - 1 - x)] =
+          src[y * width + x];
+    }
+  }
+  return output;
 }
 
 - (NSData*)encodedImageDataFromJPEG:(NSData*)jpeg uti:(NSString*)uti {
@@ -408,9 +443,13 @@ static os_log_t scannerLog(void) {
   NSUInteger height = options.height;
   os_log(scannerLog(), "Overview: %lux%lu px", (unsigned long)width,
          (unsigned long)height);
+  kmFileLog([NSString stringWithFormat:@"Overview: %lux%lu px",
+                                       (unsigned long)width,
+                                       (unsigned long)height]);
   NSData* gray = [NSData dataWithBytes:pages[0].data.data()
                                 length:pages[0].data.size()];
   gray = [self paddedGrayData:gray width:width height:height];
+  gray = [self rotated180GrayData:gray width:width height:height];
 
   NSMutableDictionary* notification = [NSMutableDictionary dictionary];
   notification[(id)kICANotificationICAObjectKey] =
@@ -463,6 +502,13 @@ static os_log_t scannerLog(void) {
          (unsigned long)width, (unsigned long)height, options.dpiX,
          options.dpiY, self.documentFolderPath, self.documentName,
          self.documentUTI);
+  kmFileLog([NSString stringWithFormat:
+                          @"Final: %lux%lu px, dpi=%d,%d, folder=%@, "
+                          @"name=%@, uti=%@, ext=%@",
+                          (unsigned long)width, (unsigned long)height,
+                          options.dpiX, options.dpiY, self.documentFolderPath,
+                          self.documentName, self.documentUTI,
+                          self.documentExtension]);
 
   brscan::Session session;
   if (![self connectSession:&session]) {
@@ -506,6 +552,7 @@ static os_log_t scannerLog(void) {
     NSData* gray = [NSData dataWithBytes:pages[i].data.data()
                                   length:pages[i].data.size()];
     gray = [self paddedGrayData:gray width:width height:height];
+    gray = [self rotated180GrayData:gray width:width height:height];
     NSData* encoded =
         [self encodedImageDataFromRawGray:gray
                                     width:width
@@ -567,6 +614,9 @@ static os_log_t scannerLog(void) {
   os_log(scannerLog(),
          "Start: overview=%d final=%d",
          self.overviewRequested, self.finalScanRequested);
+  kmFileLog([NSString stringWithFormat:@"Start: overview=%d final=%d",
+                                       self.overviewRequested,
+                                       self.finalScanRequested]);
   if (self.overviewRequested) {
     [self performOverviewScan];
   } else if (self.finalScanRequested) {
