@@ -4,6 +4,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 #import <ImageIO/ImageIO.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <os/log.h>
 
 #include "brscan.h"
 
@@ -26,6 +27,16 @@
 @end
 
 @implementation KMScannerDevice
+
+static os_log_t scannerLog(void) {
+  static os_log_t log = nil;
+  static dispatch_once_t once;
+  dispatch_once(&once, ^{
+    log = os_log_create("com.konicaminolta.bizhub3000mf.scanner.ica",
+                        "KMScannerModule");
+  });
+  return log;
+}
 
 - (instancetype)initWithNetworkParams:(NSDictionary*)params {
   if ((self = [super init])) {
@@ -177,9 +188,13 @@
 
   if (dict[@"progressNotificationWithData"]) {
     self.overviewRequested = [dict[@"progressNotificationWithData"] boolValue];
+  } else {
+    self.overviewRequested = NO;
   }
   if (dict[@"progressNotificationNoData"]) {
     self.finalScanRequested = [dict[@"progressNotificationNoData"] boolValue];
+  } else {
+    self.finalScanRequested = NO;
   }
 
   if (dict[@"offsetX"]) {
@@ -199,6 +214,9 @@
   self.documentFolderPath = dict[@"document folder"];
   self.documentUTI = dict[@"document format"];
   self.documentExtension = dict[@"document extension"];
+
+  os_log(scannerLog(),
+         "SetParameters: %{public}@", paramDict);
 
   return noErr;
 }
@@ -301,31 +319,6 @@
   return output;
 }
 
-- (NSData*)rgbaDataFromGray:(NSData*)gray
-                      width:(NSUInteger)width
-                     height:(NSUInteger)height {
-  if (width == 0 || height == 0) {
-    return [NSData data];
-  }
-  NSUInteger pixels = width * height;
-  if (gray.length < pixels) {
-    gray = [self paddedGrayData:gray width:width height:height];
-  }
-  const uint8_t* src = (const uint8_t*)gray.bytes;
-  NSMutableData* rgba =
-      [NSMutableData dataWithLength:pixels * 4];
-  uint8_t* dst = (uint8_t*)rgba.mutableBytes;
-  NSUInteger count = MIN(pixels, gray.length);
-  for (NSUInteger i = 0; i < count; ++i) {
-    uint8_t v = src[i];
-    dst[i * 4 + 0] = v;
-    dst[i * 4 + 1] = v;
-    dst[i * 4 + 2] = v;
-    dst[i * 4 + 3] = 255;
-  }
-  return rgba;
-}
-
 #pragma mark - Scanning
 
 - (brscan::ScanOptions)scanOptionsForOverview:(BOOL)overview
@@ -368,7 +361,7 @@
     options.x = 0;
     options.y = 0;
     options.width = (int)(210.0 * x / 25.4);
-    options.height = (int)(297.0 * y / 25.4);
+    options.height = (int)(291.0 * y / 25.4);
   } else {
     options.x = (int)(offsetX * x / (nativeX > 0 ? nativeX : 600.0));
     options.y = (int)(offsetY * y / (nativeY > 0 ? nativeY : 600.0));
@@ -379,7 +372,7 @@
     options.width = (int)(210.0 * x / 25.4);
   }
   if (options.height <= 0) {
-    options.height = (int)(297.0 * y / 25.4);
+    options.height = (int)(291.0 * y / 25.4);
   }
   return options;
 }
@@ -413,9 +406,11 @@
 
   NSUInteger width = options.width;
   NSUInteger height = options.height;
+  os_log(scannerLog(), "Overview: %lux%lu px", (unsigned long)width,
+         (unsigned long)height);
   NSData* gray = [NSData dataWithBytes:pages[0].data.data()
                                 length:pages[0].data.size()];
-  NSData* rgba = [self rgbaDataFromGray:gray width:width height:height];
+  gray = [self paddedGrayData:gray width:width height:height];
 
   NSMutableDictionary* notification = [NSMutableDictionary dictionary];
   notification[(id)kICANotificationICAObjectKey] =
@@ -424,8 +419,8 @@
       (__bridge id)kICANotificationTypeScanProgressStatus;
   ICDAddImageInfoToNotificationDictionary(
       (__bridge CFMutableDictionaryRef)notification, (unsigned)width,
-      (unsigned)height, (unsigned)(width * 4), 0, (unsigned)height,
-      (unsigned)(rgba.length), (void*)rgba.bytes);
+      (unsigned)height, (unsigned)width, 0, (unsigned)height,
+      (unsigned)(gray.length), (void*)gray.bytes);
 
   if ([self waitingForCancelWithNotification:notification]) {
     self.cancelRequested = YES;
@@ -463,6 +458,11 @@
 
   NSUInteger width = options.width;
   NSUInteger height = options.height;
+  os_log(scannerLog(),
+         "Final: %lux%lu px, dpi=%d,%d, folder=%@, name=%@, uti=%@",
+         (unsigned long)width, (unsigned long)height, options.dpiX,
+         options.dpiY, self.documentFolderPath, self.documentName,
+         self.documentUTI);
 
   brscan::Session session;
   if (![self connectSession:&session]) {
@@ -564,6 +564,9 @@
 
 - (ICAError)startScanningWithParams:(ICD_ScannerStartPB*)pb {
   self.cancelRequested = NO;
+  os_log(scannerLog(),
+         "Start: overview=%d final=%d",
+         self.overviewRequested, self.finalScanRequested);
   if (self.overviewRequested) {
     [self performOverviewScan];
   } else if (self.finalScanRequested) {

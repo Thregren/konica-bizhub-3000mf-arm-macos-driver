@@ -55,14 +55,14 @@
 						<key>type</key>
 						<string>TWON_ONEVALUE</string>
 						<key>value</key>
-						<integer>7087</integer>
+						<integer>6874</integer>
 					</dict>
 					<key>ICAP_PHYSICALWIDTH</key>
 					<dict>
 						<key>type</key>
 						<string>TWON_ONEVALUE</string>
 						<key>value</key>
-						<integer>5100</integer>
+						<integer>4937</integer>
 					</dict>
 					<key>ICAP_PIXELTYPE</key>
 					<dict>
@@ -193,14 +193,14 @@
 						<key>type</key>
 						<string>TWON_ONEVALUE</string>
 						<key>value</key>
-						<integer>7087</integer>
+						<integer>6874</integer>
 					</dict>
 					<key>ICAP_PHYSICALWIDTH</key>
 					<dict>
 						<key>type</key>
 						<string>TWON_ONEVALUE</string>
 						<key>value</key>
-						<integer>5100</integer>
+						<integer>4937</integer>
 					</dict>
 					<key>ICAP_PIXELTYPE</key>
 					<dict>
