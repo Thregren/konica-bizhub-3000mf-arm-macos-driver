@@ -304,11 +304,19 @@
 - (NSData*)rgbaDataFromGray:(NSData*)gray
                       width:(NSUInteger)width
                      height:(NSUInteger)height {
+  if (width == 0 || height == 0) {
+    return [NSData data];
+  }
+  NSUInteger pixels = width * height;
+  if (gray.length < pixels) {
+    gray = [self paddedGrayData:gray width:width height:height];
+  }
   const uint8_t* src = (const uint8_t*)gray.bytes;
   NSMutableData* rgba =
-      [NSMutableData dataWithLength:width * height * 4];
+      [NSMutableData dataWithLength:pixels * 4];
   uint8_t* dst = (uint8_t*)rgba.mutableBytes;
-  for (NSUInteger i = 0; i < width * height; ++i) {
+  NSUInteger count = MIN(pixels, gray.length);
+  for (NSUInteger i = 0; i < count; ++i) {
     uint8_t v = src[i];
     dst[i * 4 + 0] = v;
     dst[i * 4 + 1] = v;
