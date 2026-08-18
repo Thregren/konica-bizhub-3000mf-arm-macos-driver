@@ -1,0 +1,213 @@
+*PPD-Adobe: "4.3"
+
+*%===========================================================
+*%  KONICA MINOLTA bizhub 2600P - native ARM64 print driver
+*%
+*%  Protocol implementation: brlaser v6 (GPL-2.0+),
+*%  Copyright (C) 2013 Peter De Wachter and contributors.
+*%  See LICENSE/README in this repository for full attribution.
+*%
+*%  This PPD drives the Brother ML13-engine (GDI/HBP) printer via
+*%  PJL + *b1030m raster blocks. The bundled arm64 CUPS filter is
+*%  pure open source: no Rosetta and no vendor binaries required.
+*%===========================================================
+
+*FormatVersion: "4.3"
+*FileVersion: "1.0.0"
+*LanguageEncoding: UTF-8
+*LanguageVersion: English
+*PCFileName: "BH2600P.PPD"
+*Manufacturer: "KONICA MINOLTA"
+*Product: "(bizhub 2600P)"
+*ModelName: "KONICA MINOLTA bizhub 2600P (ARM)"
+*ShortNickName: "bizhub 2600P (ARM)"
+*NickName: "KONICA MINOLTA bizhub 2600P (ARM), brlaser v6"
+*1284DeviceID: "MFG:KONICA MINOLTA;CMD:PJL,HBP;MDL:bizhub 2600P;CLS:PRINTER;CID:Brother Laser Type1;"
+*PSVersion: "(3010.000) 0"
+*LanguageLevel: "2"
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*TTRasterizer: Type42
+*FileSystem: False
+*Throughput: "26"
+*cupsVersion: 1.5
+*cupsManualCopies: False
+*cupsFilter: "application/vnd.cups-raster 33 /Library/Printers/KONICAMINOLTA/Filter/rastertobrlaser"
+*cupsModelNumber: 0
+
+*%==== Page Sizes ============================================
+*OpenUI *PageSize/Paper Size: PickOne
+*OrderDependency: 10 AnySetup *PageSize
+*DefaultPageSize: A4
+*PageSize A4/A4: "<</PageSize[595 842]/ImagingBBox null>>setpagedevice"
+*PageSize Letter/Letter: "<</PageSize[612 792]/ImagingBBox null>>setpagedevice"
+*PageSize Legal/Legal: "<</PageSize[612 1008]/ImagingBBox null>>setpagedevice"
+*PageSize Executive/Executive: "<</PageSize[522 756]/ImagingBBox null>>setpagedevice"
+*PageSize A5/A5: "<</PageSize[420 595]/ImagingBBox null>>setpagedevice"
+*PageSize A5Rotated/A5 Long Edge: "<</PageSize[595 420]/ImagingBBox null>>setpagedevice"
+*PageSize A6/A6: "<</PageSize[297 420]/ImagingBBox null>>setpagedevice"
+*PageSize ISOB5/B5 (ISO): "<</PageSize[499 709]/ImagingBBox null>>setpagedevice"
+*PageSize B5/B5 (JIS): "<</PageSize[516 729]/ImagingBBox null>>setpagedevice"
+*PageSize B6/B6 (JIS): "<</PageSize[363 516]/ImagingBBox null>>setpagedevice"
+*PageSize EnvDL/DL Envelope: "<</PageSize[312 624]/ImagingBBox null>>setpagedevice"
+*PageSize EnvC5/C5 Envelope: "<</PageSize[459 649]/ImagingBBox null>>setpagedevice"
+*PageSize Env10/Com-10 Envelope: "<</PageSize[297 684]/ImagingBBox null>>setpagedevice"
+*PageSize EnvMonarch/Monarch Envelope: "<</PageSize[279 540]/ImagingBBox null>>setpagedevice"
+*PageSize 3x5/3 x 5: "<</PageSize[216 360]/ImagingBBox null>>setpagedevice"
+*PageSize FanFoldGermanLegal/Folio: "<</PageSize[612 936]/ImagingBBox null>>setpagedevice"
+*PageSize Postcard/Hagaki: "<</PageSize[284 419]/ImagingBBox null>>setpagedevice"
+*PageSize 210x270mm/270mm Paper: "<</PageSize[595 765]/ImagingBBox null>>setpagedevice"
+*PageSize 195x270mm/16K (195x270mm): "<</PageSize[553 765]/ImagingBBox null>>setpagedevice"
+*PageSize 184x260mm/16K (184x260mm): "<</PageSize[522 737]/ImagingBBox null>>setpagedevice"
+*PageSize 197x273mm/16K (197x273mm): "<</PageSize[558 774]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageSize
+
+*OpenUI *PageRegion/Paper Size: PickOne
+*OrderDependency: 10 AnySetup *PageRegion
+*DefaultPageRegion: A4
+*PageRegion A4/A4: "<</PageSize[595 842]/ImagingBBox null>>setpagedevice"
+*PageRegion Letter/Letter: "<</PageSize[612 792]/ImagingBBox null>>setpagedevice"
+*PageRegion Legal/Legal: "<</PageSize[612 1008]/ImagingBBox null>>setpagedevice"
+*PageRegion Executive/Executive: "<</PageSize[522 756]/ImagingBBox null>>setpagedevice"
+*PageRegion A5/A5: "<</PageSize[420 595]/ImagingBBox null>>setpagedevice"
+*PageRegion A5Rotated/A5 Long Edge: "<</PageSize[595 420]/ImagingBBox null>>setpagedevice"
+*PageRegion A6/A6: "<</PageSize[297 420]/ImagingBBox null>>setpagedevice"
+*PageRegion ISOB5/B5 (ISO): "<</PageSize[499 709]/ImagingBBox null>>setpagedevice"
+*PageRegion B5/B5 (JIS): "<</PageSize[516 729]/ImagingBBox null>>setpagedevice"
+*PageRegion B6/B6 (JIS): "<</PageSize[363 516]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvDL/DL Envelope: "<</PageSize[312 624]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvC5/C5 Envelope: "<</PageSize[459 649]/ImagingBBox null>>setpagedevice"
+*PageRegion Env10/Com-10 Envelope: "<</PageSize[297 684]/ImagingBBox null>>setpagedevice"
+*PageRegion EnvMonarch/Monarch Envelope: "<</PageSize[279 540]/ImagingBBox null>>setpagedevice"
+*PageRegion 3x5/3 x 5: "<</PageSize[216 360]/ImagingBBox null>>setpagedevice"
+*PageRegion FanFoldGermanLegal/Folio: "<</PageSize[612 936]/ImagingBBox null>>setpagedevice"
+*PageRegion Postcard/Hagaki: "<</PageSize[284 419]/ImagingBBox null>>setpagedevice"
+*PageRegion 210x270mm/270mm Paper: "<</PageSize[595 765]/ImagingBBox null>>setpagedevice"
+*PageRegion 195x270mm/16K (195x270mm): "<</PageSize[553 765]/ImagingBBox null>>setpagedevice"
+*PageRegion 184x260mm/16K (184x260mm): "<</PageSize[522 737]/ImagingBBox null>>setpagedevice"
+*PageRegion 197x273mm/16K (197x273mm): "<</PageSize[558 774]/ImagingBBox null>>setpagedevice"
+*CloseUI: *PageRegion
+
+*DefaultImageableArea: A4
+*ImageableArea A4/A4: "12 12 583 830"
+*ImageableArea Letter/Letter: "12 12 600 780"
+*ImageableArea Legal/Legal: "12 12 600 996"
+*ImageableArea Executive/Executive: "12 12 510 744"
+*ImageableArea A5/A5: "12 12 408 583"
+*ImageableArea A5Rotated/A5 Long Edge: "12 12 583 408"
+*ImageableArea A6/A6: "12 12 285 408"
+*ImageableArea ISOB5/B5 (ISO): "12 12 487 697"
+*ImageableArea B5/B5 (JIS): "12 12 504 717"
+*ImageableArea B6/B6 (JIS): "12 12 351 504"
+*ImageableArea EnvDL/DL Envelope: "12 12 300 612"
+*ImageableArea EnvC5/C5 Envelope: "12 12 447 637"
+*ImageableArea Env10/Com-10 Envelope: "12 12 285 672"
+*ImageableArea EnvMonarch/Monarch Envelope: "12 12 267 528"
+*ImageableArea 3x5/3 x 5: "12 12 204 348"
+*ImageableArea FanFoldGermanLegal/Folio: "12 12 600 924"
+*ImageableArea Postcard/Hagaki: "12 12 272 407"
+*ImageableArea 210x270mm/270mm Paper: "12 12 583 753"
+*ImageableArea 195x270mm/16K (195x270mm): "12 12 541 753"
+*ImageableArea 184x260mm/16K (184x260mm): "12 12 510 725"
+*ImageableArea 197x273mm/16K (197x273mm): "12 12 546 762"
+
+*DefaultPaperDimension: A4
+*PaperDimension A4/A4: "595 842"
+*PaperDimension Letter/Letter: "612 792"
+*PaperDimension Legal/Legal: "612 1008"
+*PaperDimension Executive/Executive: "522 756"
+*PaperDimension A5/A5: "420 595"
+*PaperDimension A5Rotated/A5 Long Edge: "595 420"
+*PaperDimension A6/A6: "297 420"
+*PaperDimension ISOB5/B5 (ISO): "499 709"
+*PaperDimension B5/B5 (JIS): "516 729"
+*PaperDimension B6/B6 (JIS): "363 516"
+*PaperDimension EnvDL/DL Envelope: "312 624"
+*PaperDimension EnvC5/C5 Envelope: "459 649"
+*PaperDimension Env10/Com-10 Envelope: "297 684"
+*PaperDimension EnvMonarch/Monarch Envelope: "279 540"
+*PaperDimension 3x5/3 x 5: "216 360"
+*PaperDimension FanFoldGermanLegal/Folio: "612 936"
+*PaperDimension Postcard/Hagaki: "284 419"
+*PaperDimension 210x270mm/270mm Paper: "595 765"
+*PaperDimension 195x270mm/16K (195x270mm): "553 765"
+*PaperDimension 184x260mm/16K (184x260mm): "522 737"
+*PaperDimension 197x273mm/16K (197x273mm): "558 774"
+
+*HWMargins: 12 12 12 12
+
+*%==== Resolution ============================================
+*OpenUI *Resolution/Resolution: PickOne
+*OrderDependency: 10 AnySetup *Resolution
+*DefaultResolution: 600dpi
+*Resolution 600dpi/600 DPI: "<</HWResolution[600 600]>>setpagedevice"
+*Resolution 1200dpi/HQ1200 (2400x600): "<</HWResolution[1200 1200]>>setpagedevice"
+*CloseUI: *Resolution
+
+*%==== Media Type ============================================
+*OpenUI *MediaType/Media Type: PickOne
+*OrderDependency: 20 AnySetup *MediaType
+*DefaultMediaType: PLAIN
+*MediaType PLAIN/Plain Paper: "<</MediaType(PLAIN)>>setpagedevice"
+*MediaType THIN/Thin Paper: "<</MediaType(THIN)>>setpagedevice"
+*MediaType THICK/Thick Paper: "<</MediaType(THICK)>>setpagedevice"
+*MediaType THICKER/Thicker Paper: "<</MediaType(THICKER)>>setpagedevice"
+*MediaType BOND/Bond Paper: "<</MediaType(BOND)>>setpagedevice"
+*MediaType TRANS/Transparencies: "<</MediaType(TRANS)>>setpagedevice"
+*MediaType ENV/Envelopes: "<</MediaType(ENV)>>setpagedevice"
+*MediaType ENV-THICK/Thick Envelopes: "<</MediaType(ENV-THICK)>>setpagedevice"
+*MediaType ENV-THIN/Thin Envelopes: "<</MediaType(ENV-THIN)>>setpagedevice"
+*CloseUI: *MediaType
+
+*%==== Paper Source ==========================================
+*OpenUI *InputSlot/Paper Source: PickOne
+*OrderDependency: 30 AnySetup *InputSlot
+*DefaultInputSlot: Auto
+*InputSlot Auto/Auto Select: "<</MediaPosition 0>>setpagedevice"
+*InputSlot Tray1/Tray 1: "<</MediaPosition 1>>setpagedevice"
+*InputSlot MPTray/MP Tray: "<</MediaPosition 4>>setpagedevice"
+*CloseUI: *InputSlot
+
+*%==== Duplex ================================================
+*OpenUI *Duplex/Two-Sided Printing: PickOne
+*OrderDependency: 40 AnySetup *Duplex
+*DefaultDuplex: None
+*Duplex None/Off: "<</Duplex false>>setpagedevice"
+*Duplex DuplexNoTumble/Long-Edge Binding: "<</Duplex true/Tumble false>>setpagedevice"
+*Duplex DuplexTumble/Short-Edge Binding: "<</Duplex true/Tumble true>>setpagedevice"
+*CloseUI: *Duplex
+
+*%==== Toner Save ============================================
+*OpenUI *brlaserEconomode/Toner Save Mode: Boolean
+*OrderDependency: 10 AnySetup *brlaserEconomode
+*DefaultbrlaserEconomode: False
+*brlaserEconomode False/Off: "<</cupsInteger10 0>>setpagedevice"
+*brlaserEconomode True/On: "<</cupsInteger10 1>>setpagedevice"
+*CloseUI: *brlaserEconomode
+
+*%==== Constraints ===========================================
+*UIConstraints: *PageSize A5 *Duplex DuplexNoTumble
+*UIConstraints: *PageSize A5 *Duplex DuplexTumble
+*UIConstraints: *PageSize A5Rotated *Duplex DuplexNoTumble
+*UIConstraints: *PageSize A5Rotated *Duplex DuplexTumble
+*UIConstraints: *PageSize A6 *Duplex DuplexNoTumble
+*UIConstraints: *PageSize A6 *Duplex DuplexTumble
+*UIConstraints: *PageSize B5 *Duplex DuplexNoTumble
+*UIConstraints: *PageSize B5 *Duplex DuplexTumble
+*UIConstraints: *PageSize B6 *Duplex DuplexNoTumble
+*UIConstraints: *PageSize B6 *Duplex DuplexTumble
+*UIConstraints: *PageSize 3x5 *Duplex DuplexNoTumble
+*UIConstraints: *PageSize 3x5 *Duplex DuplexTumble
+*UIConstraints: *PageSize EnvDL *Duplex DuplexNoTumble
+*UIConstraints: *PageSize EnvDL *Duplex DuplexTumble
+*UIConstraints: *PageSize EnvC5 *Duplex DuplexNoTumble
+*UIConstraints: *PageSize EnvC5 *Duplex DuplexTumble
+*UIConstraints: *PageSize Env10 *Duplex DuplexNoTumble
+*UIConstraints: *PageSize Env10 *Duplex DuplexTumble
+*UIConstraints: *PageSize EnvMonarch *Duplex DuplexNoTumble
+*UIConstraints: *PageSize EnvMonarch *Duplex DuplexTumble
+*UIConstraints: *PageSize Postcard *Duplex DuplexNoTumble
+*UIConstraints: *PageSize Postcard *Duplex DuplexTumble
+
+*%==== End ===================================================
+*End
