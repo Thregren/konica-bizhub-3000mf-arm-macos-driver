@@ -134,3 +134,11 @@ zsh build.sh
 - 本项目对 brlaser 的适配修改（柯尼卡纸型映射、1200HQ 的 `RESOLUTION=1200`、macOS 双面/省墨选项兼容）同样以 GPL-2.0-or-later 发布；
 - 本项目不含任何柯尼卡美能达/Brother 的闭源代码、LUT 或数据文件，与两家厂商无隶属关系；
 - 请遵守打印机使用许可，本驱动按原样提供，不附带任何担保。建议先试打一张再批量使用。
+
+## 贡献者
+
+详见 [CONTRIBUTORS.md](CONTRIBUTORS.md)。本项目由以下成员协作完成：
+
+- **Thregren** —— 项目发起、机型信息与需求
+- **Codex**（OpenAI Codex）—— 驱动逆向分析、arm64 原生实现与验证
+- **DeepSeek** —— 方案协作
