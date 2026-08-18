@@ -61,12 +61,14 @@ class Session {
   bool connect(const std::string& host, uint16_t port = 54921,
                int timeoutSec = 15);
   bool lease(int dpi, ColorMode mode, Offer* offer);
-  bool startScan(const ScanOptions& options, std::vector<ScanPage>* pages);
+  bool startScan(const ScanOptions& options, std::vector<ScanPage>* pages,
+                 int idleTimeoutSec = 90);
   bool cancel();
   void close();
 
   bool connected() const { return fd_ >= 0; }
   const std::string& lastError() const { return error_; }
+  void setDebug(bool enabled) { debug_ = enabled; }
 
   static const char* modeString(ColorMode mode);
 
@@ -78,6 +80,7 @@ class Session {
 
   int fd_ = -1;
   std::string error_;
+  bool debug_ = false;
 };
 
 }  // namespace brscan

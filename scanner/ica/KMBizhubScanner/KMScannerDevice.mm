@@ -261,6 +261,25 @@
   return output;
 }
 
+- (NSData*)paddedGrayData:(NSData*)gray
+                    width:(NSUInteger)width
+                   height:(NSUInteger)height {
+  NSUInteger expected = width * height;
+  if (gray.length >= expected || width == 0 || gray.length == 0) {
+    return gray;
+  }
+  NSMutableData* padded = [gray mutableCopy];
+  const uint8_t* src = (const uint8_t*)gray.bytes;
+  NSData* lastRow =
+      [NSData dataWithBytes:src + (gray.length - width) length:width];
+  while (padded.length < expected) {
+    NSUInteger remaining = expected - padded.length;
+    NSUInteger count = MIN(remaining, width);
+    [padded appendBytes:lastRow.bytes length:count];
+  }
+  return padded;
+}
+
 - (NSData*)encodedImageDataFromJPEG:(NSData*)jpeg uti:(NSString*)uti {
   CGImageSourceRef source =
       CGImageSourceCreateWithData((__bridge CFDataRef)jpeg, NULL);
@@ -478,6 +497,7 @@
     }
     NSData* gray = [NSData dataWithBytes:pages[i].data.data()
                                   length:pages[i].data.size()];
+    gray = [self paddedGrayData:gray width:width height:height];
     NSData* encoded =
         [self encodedImageDataFromRawGray:gray
                                     width:width

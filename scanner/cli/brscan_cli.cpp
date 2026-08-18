@@ -31,6 +31,7 @@ void usage(const char* argv0) {
           "  --width N       selection width (default: full bed)\n"
           "  --height N      selection height (default: full bed)\n"
           "  --out PREFIX    output file prefix (default: scan)\n"
+          "  --timeout N     idle timeout in seconds (default 90)\n"
           "  --debug         print protocol trace to stderr\n",
           argv0);
 }
@@ -56,6 +57,20 @@ void writePgm(const char* path, int width, int height,
   fclose(f);
 }
 
+void padPageToSize(std::vector<uint8_t>* data, int width, int height) {
+  size_t expected = (size_t)width * height;
+  if (data->size() >= expected || width <= 0 || data->empty()) {
+    return;
+  }
+  size_t rowBytes = (size_t)width;
+  std::vector<uint8_t> lastRow(data->end() - rowBytes, data->end());
+  while (data->size() < expected) {
+    size_t remaining = expected - data->size();
+    size_t count = remaining < rowBytes ? remaining : rowBytes;
+    data->insert(data->end(), lastRow.begin(), lastRow.begin() + count);
+  }
+}
+
 }  // namespace
 
 int main(int argc, char** argv) {
@@ -70,6 +85,7 @@ int main(int argc, char** argv) {
   int width = 0;
   int height = 0;
   std::string outPrefix = "scan";
+  int idleTimeout = 90;
   bool debug = false;
 
   for (int i = 1; i < argc; ++i) {
@@ -114,6 +130,8 @@ int main(int argc, char** argv) {
       height = atoi(next(argc, argv, &i).c_str());
     } else if (arg == "--out" && hasNext(argc, argv, &i)) {
       outPrefix = next(argc, argv, &i);
+    } else if (arg == "--timeout" && hasNext(argc, argv, &i)) {
+      idleTimeout = atoi(next(argc, argv, &i).c_str());
     } else if (arg == "--debug") {
       debug = true;
     } else if (arg == "-h" || arg == "--help") {
@@ -131,6 +149,7 @@ int main(int argc, char** argv) {
   }
 
   brscan::Session session;
+  session.setDebug(debug);
   if (debug) {
     fprintf(stderr, "connecting to %s:%d\n", ip.c_str(), port);
   }
@@ -181,7 +200,7 @@ int main(int argc, char** argv) {
             width, height, options.dpiX, options.dpiY,
             brscan::Session::modeString(mode), x, y, width, height);
   }
-  if (!session.startScan(options, &pages)) {
+  if (!session.startScan(options, &pages, idleTimeout)) {
     fprintf(stderr, "error: %s\n", session.lastError().c_str());
     return 1;
   }
@@ -206,6 +225,7 @@ int main(int argc, char** argv) {
       fwrite(pages[i].data.data(), 1, pages[i].data.size(), f);
       fclose(f);
     } else if (mode == brscan::ColorMode::Gray64) {
+      padPageToSize(&pages[i].data, width, height);
       writePgm(path, width, height, pages[i].data);
     } else {
       fprintf(stderr, "text mode decode is not implemented yet\n");

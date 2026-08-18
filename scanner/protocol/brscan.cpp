@@ -190,8 +190,8 @@ bool Session::parseOffer(const std::vector<uint8_t>& raw, Offer* offer) {
 bool Session::readPages(std::vector<ScanPage>* pages, int idleTimeoutSec) {
   constexpr uint8_t kEndScan = 0x80;
   constexpr uint8_t kEndPage = 0x82;
-  constexpr size_t kHeaderLen = 12;
-  constexpr size_t kPageFooterLen = 10;
+  constexpr size_t kHeaderLen = 12;  // type(1) + descriptor(9) + length(2)
+  constexpr size_t kPageFooterLen = 9;
 
   if (idleTimeoutSec > 0) {
     struct timeval tv;
@@ -202,6 +202,16 @@ bool Session::readPages(std::vector<ScanPage>* pages, int idleTimeoutSec) {
 
   std::vector<uint8_t> pending;
   ScanPage page;
+  bool firstRead = true;
+  FILE* debugDump = nullptr;
+  if (debug_) {
+    char dumpPath[128];
+    snprintf(dumpPath, sizeof(dumpPath), "/tmp/brscan-raw-%d.bin", getpid());
+    debugDump = fopen(dumpPath, "wb");
+    if (debugDump) {
+      fprintf(stderr, "DEBUG: dumping raw stream to %s\n", dumpPath);
+    }
+  }
   while (true) {
     // Consume complete frames from the pending buffer.
     bool progressed = true;
@@ -255,8 +265,27 @@ bool Session::readPages(std::vector<ScanPage>* pages, int idleTimeoutSec) {
     uint8_t chunk[65536];
     ssize_t n = recv(fd_, chunk, sizeof(chunk), 0);
     if (n > 0) {
+      if (debugDump) {
+        fwrite(chunk, 1, (size_t)n, debugDump);
+      }
+      if (debug_ && firstRead) {
+        firstRead = false;
+        fprintf(stderr, "DEBUG: first %zu bytes from scanner:\n",
+                n < 32 ? (size_t)n : (size_t)32);
+        for (ssize_t i = 0; i < n && i < 32; ++i) {
+          fprintf(stderr, "%02x ", chunk[i]);
+          if ((i + 1) % 16 == 0) {
+            fprintf(stderr, "\n");
+          }
+        }
+        fprintf(stderr, "\n");
+      }
       pending.insert(pending.end(), chunk, chunk + n);
       continue;
+    }
+    if (debugDump) {
+      fclose(debugDump);
+      debugDump = nullptr;
     }
     if (n == 0) {
       break;  // peer closed
@@ -275,6 +304,9 @@ bool Session::readPages(std::vector<ScanPage>* pages, int idleTimeoutSec) {
 
   if (!page.data.empty()) {
     pages->push_back(std::move(page));
+  }
+  if (debugDump) {
+    fclose(debugDump);
   }
   return !pages->empty();
 }
@@ -299,7 +331,7 @@ bool Session::lease(int dpi, ColorMode mode, Offer* offer) {
 }
 
 bool Session::startScan(const ScanOptions& options,
-                        std::vector<ScanPage>* pages) {
+                        std::vector<ScanPage>* pages, int idleTimeoutSec) {
   if (pages == nullptr) {
     error_ = "null pages output";
     return false;
@@ -336,7 +368,7 @@ bool Session::startScan(const ScanOptions& options,
     return false;
   }
 
-  if (!readPages(pages, 20)) {
+  if (!readPages(pages, idleTimeoutSec)) {
     if (error_.empty()) {
       error_ = "no image data received";
     }
