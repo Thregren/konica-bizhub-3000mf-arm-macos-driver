@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>BonjourNetwork</key>
+	<dict>
+		<key>_scanner._tcp.</key>
+		<array>
+			<dict>
+				<key>device events</key>
+				<array>
+					<string>scan</string>
+				</array>
+				<key>device type</key>
+				<string>scanner</string>
+				<key>ICABonjourTXTRecordKey</key>
+				<dict>
+					<key>mdl</key>
+					<string>bizhub 3000MF</string>
+					<key>mfg</key>
+					<string>KONICA MINOLTA</string>
+				</dict>
+			</dict>
+			<dict>
+				<key>device events</key>
+				<array>
+					<string>scan</string>
+				</array>
+				<key>device type</key>
+				<string>scanner</string>
+				<key>ICABonjourTXTRecordKey</key>
+				<dict>
+					<key>mdl</key>
+					<string>bizhub 3080MF</string>
+					<key>mfg</key>
+					<string>KONICA MINOLTA</string>
+				</dict>
+			</dict>
+		</array>
+	</dict>
+	<key>Version</key>
+	<string>1.0</string>
+</dict>
+</plist>

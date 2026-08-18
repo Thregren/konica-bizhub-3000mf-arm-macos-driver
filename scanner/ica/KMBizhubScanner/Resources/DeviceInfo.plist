@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>device info version</key>
+	<string>3.0</string>
+	<key>devices</key>
+	<dict>
+		<key>KONICA MINOLTA bizhub 3000MF</key>
+		<dict>
+			<key>functionalUnitDescriptions</key>
+			<array>
+				<dict>
+					<key>type</key>
+					<integer>0</integer>
+				</dict>
+				<dict>
+					<key>type</key>
+					<integer>3</integer>
+				</dict>
+			</array>
+		</dict>
+		<key>KONICA MINOLTA bizhub 3080MF</key>
+		<dict>
+			<key>functionalUnitDescriptions</key>
+			<array>
+				<dict>
+					<key>type</key>
+					<integer>0</integer>
+				</dict>
+				<dict>
+					<key>type</key>
+					<integer>3</integer>
+				</dict>
+			</array>
+		</dict>
+	</dict>
+</dict>
+</plist>
