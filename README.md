@@ -34,20 +34,27 @@ build-pkg.sh         可选：在本机生成 .pkg 安装包
 
 先决条件：Apple Silicon Mac、macOS 12 或更高版本、有管理员权限。
 
+对于普通用户，请从 [GitHub Releases](https://github.com/Thregren/konica-bizhub-3000mf-arm-macos-driver/releases/latest)
+下载 `KONICA-MINOLTA-bizhub-2600P-3000MF-3080MF-ARM-v1.0.0.pkg`，然后双击
+安装。该安装包未使用 Apple Developer ID 签名；如 macOS 拦截，请在
+「系统设置 → 隐私与安全性」中确认打开，或在终端中安装：
+
 ```bash
-# 推荐方式（最透明）
+sudo installer -pkg "$HOME/Downloads/KONICA-MINOLTA-bizhub-2600P-3000MF-3080MF-ARM-v1.0.0.pkg" -target /
+```
+
+也可以从源码安装：
+
+```bash
 cd "本目录"
 zsh install.sh
 ```
 
-也可以在本机生成 .pkg 安装包（未签名）：
+维护者可在本机重新生成 `.pkg` 安装包：
 
 ```bash
 zsh build-pkg.sh
-sudo installer -pkg "dist/KONICA-MINOLTA-bizhub-3000MF-ARM-1.0.0.pkg" -target /
 ```
-
-仓库默认不附带 .pkg 文件；需要时由 `build-pkg.sh` 现场生成。
 
 安装内容：
 
@@ -56,9 +63,19 @@ sudo installer -pkg "dist/KONICA-MINOLTA-bizhub-3000MF-ARM-1.0.0.pkg" -target /
 
 ## 添加打印机
 
+
+> **重要：安装包只会安装驱动文件，不会自动创建打印机。**
+> 安装完成后，必须在 macOS 中搜索并添加打印机，再手动选择对应的
+> `KONICA MINOLTA bizhub ... (ARM)` 驱动。不要使用系统自动选中的 AirPrint
+> 或「通用 PostScript 打印机」。
+
 **图形界面：**
 
-系统设置 → 打印机与扫描仪 → 添加打印机 → 选择设备 → 在「使用」下拉框选择「选择软件…」→ 选中 `KONICA MINOLTA bizhub 3000MF (ARM)`。
+1. 打开「系统设置 → 打印机与扫描仪」，点击「添加打印机、扫描仪或传真机」。
+2. 等待 macOS 搜索到 bizhub，然后选中它。
+3. 在「使用」下拉框选择「选择软件…」。
+4. 根据机型选中 `KONICA MINOLTA bizhub 2600P (ARM)`、`3000MF (ARM)`
+   或 `3080MF (ARM)`，然后点击「添加」。
 
 **网络打印（命令行，推荐）：**
 
@@ -107,7 +124,9 @@ lpadmin -p Bizhub3000MF -E -v "上面查到的URI" \
 
 ## 扫描怎么办
 
-这台机器是 Brother 代工的私有扫描协议，没有开源的 arm64 扫描方案。可选：
+本项目的 `v1.0.0` Release 安装包只包含打印驱动，不包含扫描模块。
+仓库开发分支正在联调原生 arm64 ICA 网络扫描模块，目前不作为稳定版发布。
+在稳定扫描版本发布前，可选：
 
 - 原厂「KONICA MINOLTA Scanner B」ICA 应用是 x86_64，装 Rosetta 2 后可在「图像捕捉 / Image Capture」里扫描；
 - 原厂 TWAIN 数据源是 i386-only，Apple Silicon 无法运行，忽略即可；
