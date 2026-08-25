@@ -1,5 +1,14 @@
 # 柯尼卡美能达 bizhub 2600P / 3000MF / 3080MF —— Apple Silicon (arm64) 原生打印驱动
 
+> **v1.1.0（跨平台）**：现同时支持 macOS（Apple Silicon）与 **Linux（x86_64 / arm64）**，下载见 [Release v1.1.0](https://github.com/Thregren/konica-bizhub-3000mf-arm-macos-driver/releases/tag/v1.1.0)。
+>
+> **Linux 快速安装：**
+> ```bash
+> sudo dpkg -i konica-bizhub-2600p-3000mf-3080mf_1.1.0-1_$(dpkg --print-architecture).deb
+> lpadmin -p Bizhub3000MF -E -v socket://打印机IP:9100 \
+>   -P "/usr/share/cups/model/konica/KONICA MINOLTA bizhub 3000MF (ARM).ppd"
+> ```
+
 一个**纯 arm64、开源、无 Rosetta、不含厂商二进制**的 macOS CUPS 打印驱动。
 
 ## 先说结论（这个驱动到底解决了什么问题）
