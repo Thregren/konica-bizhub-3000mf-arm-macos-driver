@@ -142,3 +142,41 @@ zsh build.sh
 - **Thregren** —— 项目发起、机型信息与需求
 - **Codex**（OpenAI Codex）—— 驱动逆向分析、arm64 原生实现与验证
 - **DeepSeek** —— 方案协作
+
+## Linux / 全平台构建
+
+本仓库同样提供 **Linux CUPS 驱动**，产物为 **x86_64 (amd64)** 与 **aarch64 (arm64)**
+的 `.deb` 安装包。Linux 过滤器源码在 `linux/`（与 macOS 版同源的 brlaser 适配），
+链接 `libcupsimage` + `libcups`，PPD 已改用相对 `*cupsFilter`，CUPS 会从标准
+filter 目录自动解析。
+
+### 在 Linux 上构建并安装
+
+```bash
+# 需要 build-essential、g++、libcups2-dev、libcupsimage2-dev
+sudo ./scripts/install-linux.sh
+
+# 或生成 .deb
+./scripts/build-linux-deb.sh            # 当前架构
+./scripts/build-linux-deb.sh amd64      # x86_64
+./scripts/build-linux-deb.sh arm64      # ARM64
+```
+
+### 添加打印机（Linux）
+
+```bash
+lpadmin -p Bizhub3000MF -E -v socket://192.168.1.51:9100 \
+  -P "/usr/share/cups/model/konica/KONICA MINOLTA bizhub 3000MF (ARM).ppd"
+lp -d Bizhub3000MF /etc/hosts
+```
+
+### 全平台构建（GitHub Actions）
+
+`.github/workflows/release.yml` 在打 tag 时自动构建并上传：
+
+- macOS（Apple Silicon arm64）：`dist/KONICA-MINOLTA-bizhub-2600P-3000MF-3080MF-ARM-1.1.0.pkg`
+- Linux x86_64（amd64）：`build/linux/amd64/*.deb`
+- Linux aarch64（arm64）：`build/linux/arm64/*.deb`
+
+本版本不包含扫描/传真功能；扫描相关的 ICA 组件仍在开发中（见
+`codex/arm64-scanner-ica` 分支）。

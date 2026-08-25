@@ -1,0 +1,49 @@
+name: build-all-platforms
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch: {}
+
+env:
+  KONICA3000MF_VERSION: "1.1.0"
+
+jobs:
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build macOS .pkg
+        run: |
+          zsh build.sh
+          zsh build-pkg.sh
+      - name: Upload .pkg
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64-pkg
+          path: dist/*.pkg
+
+  linux:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            os: ubuntu-24.04
+          - arch: arm64
+            os: ubuntu-24.04-arm
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install CUPS dev packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential g++ libcups2-dev libcupsimage2-dev dpkg-dev
+      - name: Build .deb for ${{ matrix.arch }}
+        run: ./scripts/build-linux-deb.sh ${{ matrix.arch }} ${{ env.KONICA3000MF_VERSION }}
+      - name: Upload .deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-${{ matrix.arch }}-deb
+          path: build/linux/${{ matrix.arch }}/*.deb

@@ -50,8 +50,8 @@ pkgbuild \
   --root "$STAGE/root" \
   --scripts "$STAGE/scripts" \
   --identifier com.konicaminolta.bizhub3000mf.arm-driver \
-  --version "1.0.0" \
+  --version "1.1.0" \
   --install-location / \
-  "dist/KONICA-MINOLTA-bizhub-3000MF-ARM-1.0.0.pkg"
+  "dist/KONICA-MINOLTA-bizhub-2600P-3000MF-3080MF-ARM-1.1.0.pkg"
 
-echo "Built: dist/KONICA-MINOLTA-bizhub-3000MF-ARM-1.0.0.pkg"
+echo "Built: dist/KONICA-MINOLTA-bizhub-2600P-3000MF-3080MF-ARM-1.1.0.pkg"
